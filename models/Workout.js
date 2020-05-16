@@ -9,6 +9,10 @@ const WorkoutSchema = new Schema({
     type: Boolean,
     default: false
   },
+  totalDuration: {
+    type: Number,
+    default: 0
+  },
   exercises: [ { type: Schema.Types.ObjectId, ref: 'Exercise' } ]
 })
 
