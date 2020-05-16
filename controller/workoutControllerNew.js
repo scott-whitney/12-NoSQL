@@ -4,10 +4,14 @@ module.exports = {
   getLastWorkout: async (req, res) => {
     console.log("I'm trying to get the last workout I did")
     try {
-      const getAllWorkouts = await Workout.find({}).populate('exercises');
+      const getAllWorkouts = await Workout.find({}).populate("exercises")
       console.log('----workouts below----')
       console.log(getAllWorkouts)
       console.log('------------------')
+      const theLatestWorkout = getAllWorkouts.length - 1
+      console.log('--------- hey --------')
+      const getSpecificWorkout = await Workout.find({ _id: getAllWorkouts[theLatestWorkout]._id }).populate("exercises")
+      console.log(getSpecificWorkout)
       return res.status(200).json(getAllWorkouts)
     } catch (e) {
       return res.status(418).json(e)
@@ -18,16 +22,33 @@ module.exports = {
     console.log(req.params.id)
     console.log(req.body)
     const { type, name, duration, weight, reps, sets, distance } = req.body
+    try{
+
+      let addExercise = await new Exercise({ type, name, duration, weight, reps, sets, distance, workout: req.params.id }).save();
 
       try {
-        const newExercise = await new Workout.findByIdAndUpdate(req.params.id, {$push: { exercises: req.body } }, { new: true })
-  
-        // {$push: {exercises: body}}
+        console.log('-----inside second try block of add exercise -----')
+        const specificExercise = await Workout.find({_id: req.params.id})
+        console.log(specificExercise[0]._id)
+        console.log(addExercise._id)
+
+        console.log('---- attempting to update now ------')
+        // const addingExercise = await 
+        // const exerciseAdded = await Workout.update({$push: { exercises: req.params.id })
+
+
+        const newExercise = await Workout.findByIdAndUpdate(req.params.id, {$push: { exercises: addExercise } }, { new: true })
+
+     
         console.log(newExercise)
-        return res.status(200).json(req.body);
+        return res.status(200).json(newExercise);
       } catch (e) {
         return res.status(418).json(e)
       }
+    } catch (e) {
+      return res.status(418).json(e)
+    }
+
 
   },
   createWorkout: async (req, res) => {
