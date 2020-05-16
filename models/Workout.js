@@ -1,7 +1,7 @@
 const { Schema, model } = require('mongoose');
 
 const WorkoutSchema = new Schema({
-  dateCreated: {
+  day: {
     type: Date,
     default: Date.now()
   },

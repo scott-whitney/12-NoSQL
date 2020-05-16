@@ -12,6 +12,18 @@ module.exports = {
       console.log('--------- hey --------')
       const getSpecificWorkout = await Workout.find({ _id: getAllWorkouts[theLatestWorkout]._id }).populate("exercises")
       console.log(getSpecificWorkout)
+      console.log('testing aggregate below me ------')
+    //   const Test = await Workout.aggregate([
+    //     { "$group": {
+    //         "_id": req.params.id,
+    //         "totalValue": { 
+    //             "$sum": { "$sum": "$exercises.duration.value" } 
+    //         }
+    //     } }
+    // ])
+    
+    // console.log(Test)
+
       return res.status(200).json(getAllWorkouts)
     } catch (e) {
       return res.status(418).json(e)
@@ -19,25 +31,23 @@ module.exports = {
   },
   addExercise: async (req, res) => {
     console.log("-----I'm about to add an Exercise-----")
-    console.log(req.params.id)
-    console.log(req.body)
+
     const { type, name, duration, weight, reps, sets, distance } = req.body
     try{
 
       let addExercise = await new Exercise({ type, name, duration, weight, reps, sets, distance, workout: req.params.id }).save();
 
       try {
-        console.log('-----inside second try block of add exercise -----')
-        const specificExercise = await Workout.find({_id: req.params.id})
-        console.log(specificExercise[0]._id)
-        console.log(addExercise._id)
 
-        console.log('---- attempting to update now ------')
+        // const specificExercise = await Workout.find({_id: req.params.id})
+
+ 
         // const addingExercise = await 
         // const exerciseAdded = await Workout.update({$push: { exercises: req.params.id })
 
 
         const newExercise = await Workout.findByIdAndUpdate(req.params.id, {$push: { exercises: addExercise } }, { new: true })
+
 
      
         console.log(newExercise)
